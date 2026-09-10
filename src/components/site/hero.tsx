@@ -11,7 +11,7 @@ import {
   type Variants,
 } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { ParticleField } from "./particle-field";
+import { HeroScene } from "./hero-scene";
 import { Magnetic } from "./magnetic";
 import { scrollToSection } from "@/lib/scroll";
 
@@ -82,16 +82,16 @@ export function Hero({ ready }: HeroProps) {
         {/* vignette base */}
         <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_10%,#101015_0%,#0a0a0b_55%,#080809_100%)]" />
 
-        {/* drifting gradient orbs */}
+        {/* drifting gradient orbs — dimmed, the 3D sculpture is the star */}
         <motion.div
           style={{ y: orbY1, x: orbX }}
-          className="absolute -left-[10%] top-[8%] h-[46vw] w-[46vw] rounded-full opacity-25 blur-[110px]"
+          className="absolute -left-[10%] top-[8%] h-[46vw] w-[46vw] rounded-full opacity-[0.16] blur-[110px]"
         >
           <div className="h-full w-full rounded-full bg-[conic-gradient(from_120deg,#ffc24b,#ff6a3d,#e85d75,#ff6a3d,#ffc24b)] animate-drift" />
         </motion.div>
         <motion.div
           style={{ y: orbY2, x: orbX2 }}
-          className="absolute -right-[14%] bottom-[-18%] h-[40vw] w-[40vw] rounded-full opacity-20 blur-[120px]"
+          className="absolute -right-[14%] bottom-[-18%] h-[40vw] w-[40vw] rounded-full opacity-[0.13] blur-[120px]"
         >
           <div
             className="h-full w-full rounded-full bg-[conic-gradient(from_240deg,#e85d75,#ff6a3d,#ffc24b,#e85d75)] animate-drift"
@@ -100,10 +100,10 @@ export function Hero({ ready }: HeroProps) {
         </motion.div>
 
         {/* blueprint grid, fading with depth */}
-        <div className="absolute inset-0 bg-grid mask-fade-b opacity-70" />
+        <div className="absolute inset-0 bg-grid mask-fade-b opacity-60" />
 
-        {/* 3D particle constellation */}
-        <ParticleField className="absolute inset-0 h-full w-full" />
+        {/* GSAP + Three.js continuous 3D sculpture */}
+        <HeroScene ready={ready} className="absolute inset-0 h-full w-full" />
 
         {/* bottom fade into next section */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
@@ -112,7 +112,7 @@ export function Hero({ ready }: HeroProps) {
       {/* --- hero content --- */}
       <motion.div
         style={reduced ? undefined : { y: contentY, opacity: contentOpacity }}
-        className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 pb-24 pt-36 sm:px-8"
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 pb-14 pt-28 sm:px-8"
       >
         {/* eyebrow */}
         <motion.div
@@ -120,7 +120,7 @@ export function Hero({ ready }: HeroProps) {
           variants={fadeVariants}
           initial="hidden"
           animate={state}
-          className="mb-10 flex items-center gap-4"
+          className="mb-8 flex items-center gap-4"
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
@@ -134,7 +134,7 @@ export function Hero({ ready }: HeroProps) {
         {/* headline — cinematic masked line reveals */}
         <motion.h1
           style={reduced ? undefined : { x: headlineX, y: headlineY }}
-          className="font-display text-[clamp(2.9rem,9.2vw,8.6rem)] font-semibold leading-[0.98] tracking-[-0.02em] text-foreground"
+          className="font-display text-[clamp(2.5rem,min(7.6vw,11.6vh),7.6rem)] font-semibold leading-[0.98] tracking-[-0.02em] text-foreground"
         >
           <span className="block overflow-hidden pb-[0.08em]">
             <motion.span
@@ -189,7 +189,7 @@ export function Hero({ ready }: HeroProps) {
           variants={fadeVariants}
           initial="hidden"
           animate={state}
-          className="mt-10 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+          className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
         >
           We fuse design, engineering and artificial intelligence into websites,
           apps, SaaS platforms and digital products that feel alive — built for
@@ -202,7 +202,7 @@ export function Hero({ ready }: HeroProps) {
           variants={fadeVariants}
           initial="hidden"
           animate={state}
-          className="mt-12 flex flex-wrap items-center gap-4"
+          className="mt-10 flex flex-wrap items-center gap-4"
         >
           <Magnetic strength={0.32}>
             <a

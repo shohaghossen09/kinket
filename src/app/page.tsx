@@ -7,15 +7,20 @@ import { ScrollProgress } from "@/components/site/scroll-progress";
 import { Preloader } from "@/components/site/preloader";
 import { Nav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
+import { Marquee } from "@/components/site/marquee";
 import { Intro } from "@/components/site/intro";
 import { Services } from "@/components/site/services";
 import { Work } from "@/components/site/work";
 import { Showcase } from "@/components/site/showcase";
+import { Awards } from "@/components/site/awards";
 import { Process } from "@/components/site/process";
+import { Stack } from "@/components/site/stack";
 import { About } from "@/components/site/about";
 import { Stats } from "@/components/site/stats";
 import { Testimonials } from "@/components/site/testimonials";
+import { Faq } from "@/components/site/faq";
 import { Cta } from "@/components/site/cta";
+import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 
 export default function Home() {
@@ -32,6 +37,8 @@ export default function Home() {
       <main id="main" className="relative">
         <Hero ready={ready} />
 
+        <Marquee />
+
         <Intro
           text="We are a creative technology studio blending design, engineering and artificial intelligence into products people remember — web platforms, mobile apps, SaaS systems and intelligent experiences, built to move markets."
           highlight={["design,", "engineering", "intelligence", "remember", "move"]}
@@ -43,7 +50,11 @@ export default function Home() {
 
         <Showcase />
 
+        <Awards />
+
         <Process />
+
+        <Stack />
 
         <About />
 
@@ -51,7 +62,11 @@ export default function Home() {
 
         <Testimonials />
 
+        <Faq />
+
         <Cta />
+
+        <Contact />
       </main>
 
       <Footer />

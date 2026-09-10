@@ -117,6 +117,8 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    /* framer-motion useScroll(target) requires a non-static scrolling element */
+    position: relative;
   }
 
   body {
@@ -266,6 +268,43 @@
   .transform-3d {
     transform-style: preserve-3d;
   }
+
+  /* ---------- kinetic form fields ---------- */
+  .kinetic-input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 0.65rem 0;
+    font-size: 0.95rem;
+    color: var(--foreground);
+    transition: border-color 0.3s ease;
+  }
+  .kinetic-input::placeholder {
+    color: rgba(143, 143, 150, 0.45);
+  }
+  .kinetic-input:focus {
+    outline: none;
+    border-bottom-color: transparent;
+  }
+  .kinetic-field {
+    position: relative;
+  }
+  .kinetic-field::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1.5px;
+    width: 100%;
+    background: linear-gradient(90deg, #ffc24b, #ff6a3d, #e85d75);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .kinetic-field:focus-within::after {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes marquee {
@@ -322,3 +361,5 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* trigger recompile */

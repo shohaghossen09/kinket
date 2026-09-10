@@ -8,8 +8,11 @@ import { scrollToSection, scrollToTop } from "@/lib/scroll";
 const SITEMAP = [
   { label: "Work", href: "#work" },
   { label: "Services", href: "#services" },
+  { label: "Awards", href: "#awards" },
+  { label: "Stack", href: "#stack" },
   { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 const SERVICE_LINKS = [
@@ -39,7 +42,6 @@ export function Footer() {
 
   return (
     <footer
-      id="contact"
       aria-labelledby="footer-heading"
       className="relative overflow-hidden border-t border-white/8"
     >

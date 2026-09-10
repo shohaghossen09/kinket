@@ -21,6 +21,16 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String?
+  budget    String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
 model Post {
   id        String   @id @default(cuid())
   title     String

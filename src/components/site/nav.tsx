@@ -9,6 +9,7 @@ import { scrollToSection, getLenis } from "@/lib/scroll";
 const LINKS = [
   { label: "Work", href: "#work" },
   { label: "Services", href: "#services" },
+  { label: "Awards", href: "#awards" },
   { label: "About", href: "#about" },
   { label: "Process", href: "#process" },
   { label: "Contact", href: "#contact" },
