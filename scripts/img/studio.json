@@ -1,0 +1,40 @@
+🚀 Initializing Z-AI SDK...
+🔎 Searching images: "creative digital design studio team working modern office moody"
+✅ Got 4 images
+{
+  "success": true,
+  "query": "creative digital design studio team working modern office moody",
+  "count": 4,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/8916bd2736e9.jpg",
+      "caption": "",
+      "source": "Trendir",
+      "original_width": "1080px",
+      "original_height": "1442px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/351b473891f5.jpg",
+      "caption": "",
+      "source": "LUXE Interiors + Design",
+      "original_width": "1500px",
+      "original_height": "1126px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/7ddfe0b5479d.jpg",
+      "caption": "",
+      "source": "House Beautiful",
+      "original_width": "1778px",
+      "original_height": "2667px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/2cbae2f6cd5f.jpg",
+      "caption": "",
+      "source": "Lemon8",
+      "original_width": "2160px",
+      "original_height": "2880px"
+    }
+  ]
+}

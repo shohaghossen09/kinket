@@ -1,0 +1,40 @@
+🚀 Initializing Z-AI SDK...
+🔎 Searching images: "modern dark analytics dashboard user interface design on screen"
+✅ Got 4 images
+{
+  "success": true,
+  "query": "modern dark analytics dashboard user interface design on screen",
+  "count": 4,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/0acc32e2c5ec.png",
+      "caption": "",
+      "source": "Muzli",
+      "original_width": "1200px",
+      "original_height": "900px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/6988e076f9d3.png",
+      "caption": "",
+      "source": "Muzli",
+      "original_width": "1200px",
+      "original_height": "900px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/073247fd9f73.png",
+      "caption": "",
+      "source": "Numerro",
+      "original_width": "1395px",
+      "original_height": "783px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/ef1d941e7cb0.jpg",
+      "caption": "",
+      "source": "Toptal",
+      "original_width": "1680px",
+      "original_height": "883px"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+🚀 Initializing Z-AI SDK...
+🔎 Searching images: "premium fashion e-commerce mobile app on smartphone dark elegant"
+✅ Got 4 images
+{
+  "success": true,
+  "query": "premium fashion e-commerce mobile app on smartphone dark elegant",
+  "count": 4,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/2f499c4707df.jpg",
+      "caption": "",
+      "source": "Fashionista",
+      "original_width": "2560px",
+      "original_height": "1847px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/bd3ab5deffe2.jpg",
+      "caption": "",
+      "source": "Ralph Lauren Corporation",
+      "original_width": "1440px",
+      "original_height": "586px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/1ca601db77ff.png",
+      "caption": "",
+      "source": "Fashionista",
+      "original_width": "1373px",
+      "original_height": "1907px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/2fd6bcfe0bef.jpg",
+      "caption": "",
+      "source": "Fits",
+      "original_width": "1800px",
+      "original_height": "945px"
+    }
+  ]
+}

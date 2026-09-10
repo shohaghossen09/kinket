@@ -1,0 +1,324 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-accent-warm: var(--accent-warm);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ---------------------------------------------------------------
+   KINETIC — premium dark design system
+   near-black canvas / warm off-white type / amber-coral spectrum
+---------------------------------------------------------------- */
+:root {
+  --radius: 1rem;
+
+  --background: #0a0a0b;
+  --foreground: #f4f3ef;
+  --card: #101013;
+  --card-foreground: #f4f3ef;
+  --popover: #101013;
+  --popover-foreground: #f4f3ef;
+  --primary: #f4f3ef;
+  --primary-foreground: #0a0a0b;
+  --secondary: #161618;
+  --secondary-foreground: #f4f3ef;
+  --muted: #161618;
+  --muted-foreground: #8f8f96;
+  --accent: #ff6a3d;
+  --accent-warm: #ffc24b;
+  --accent-foreground: #0a0a0b;
+  --destructive: #ff4d4d;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #ffc24b;
+
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.07);
+
+  --chart-1: #ffc24b;
+  --chart-2: #ff6a3d;
+  --chart-3: #e85d75;
+  --chart-4: #8f8f96;
+  --chart-5: #f4f3ef;
+
+  --sidebar: #101013;
+  --sidebar-foreground: #f4f3ef;
+  --sidebar-primary: #ff6a3d;
+  --sidebar-primary-foreground: #0a0a0b;
+  --sidebar-accent: #161618;
+  --sidebar-accent-foreground: #f4f3ef;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #ffc24b;
+}
+
+.dark {
+  --background: #0a0a0b;
+  --foreground: #f4f3ef;
+  --card: #101013;
+  --card-foreground: #f4f3ef;
+  --popover: #101013;
+  --popover-foreground: #f4f3ef;
+  --primary: #f4f3ef;
+  --primary-foreground: #0a0a0b;
+  --secondary: #161618;
+  --secondary-foreground: #f4f3ef;
+  --muted: #161618;
+  --muted-foreground: #8f8f96;
+  --accent: #ff6a3d;
+  --accent-warm: #ffc24b;
+  --accent-foreground: #0a0a0b;
+  --destructive: #ff4d4d;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #ffc24b;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Lenis smooth scroll */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: #ff6a3d;
+    color: #0a0a0b;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    border: 2px solid #0a0a0b;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  :focus-visible {
+    outline: 2px solid #ffc24b;
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  /* ---------- typography helpers ---------- */
+  .font-display {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+  }
+  .font-serif-accent {
+    font-family: var(--font-serif), Georgia, serif;
+  }
+  .text-gradient {
+    background: linear-gradient(100deg, #ffc24b 0%, #ff6a3d 55%, #e85d75 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(244, 243, 239, 0.22);
+    color: transparent;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* ---------- surfaces ---------- */
+  .glass-panel {
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .glass-strong {
+    background: var(--glass-strong);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  /* cinematic film grain — static, GPU-free */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+  }
+
+  /* faint blueprint grid */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  .mask-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+  }
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+
+  /* ---------- motion utilities ---------- */
+  .animate-marquee {
+    animation: marquee 32s linear infinite;
+  }
+  .animate-marquee-fast {
+    animation: marquee 18s linear infinite;
+  }
+  .animate-spin-slow {
+    animation: spin-slow 14s linear infinite;
+  }
+  .animate-drift {
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 2.6s ease-in-out infinite;
+  }
+
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes drift {
+  0% {
+    transform: translate3d(-4%, -2%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 4%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 3%, 0) scale(0.96);
+  }
+}
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .animate-marquee-fast,
+  .animate-spin-slow,
+  .animate-drift,
+  .animate-pulse-soft {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

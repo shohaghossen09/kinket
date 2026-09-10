@@ -1,0 +1,40 @@
+🚀 Initializing Z-AI SDK...
+🔎 Searching images: "abstract holographic iridescent gradient 3D shapes art"
+✅ Got 4 images
+{
+  "success": true,
+  "query": "abstract holographic iridescent gradient 3D shapes art",
+  "count": 4,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/a7a77237c6a8.jpg",
+      "caption": "",
+      "source": "Alamy",
+      "original_width": "1300px",
+      "original_height": "904px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/fe63d3d8b28f.jpg",
+      "caption": "",
+      "source": "Adobe Stock",
+      "original_width": "1000px",
+      "original_height": "1000px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/06c7c9fc3efa.jpg",
+      "caption": "",
+      "source": "Figma",
+      "original_width": "1600px",
+      "original_height": "960px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/8bacb0710c22.jpg",
+      "caption": "",
+      "source": "123RF",
+      "original_width": "1300px",
+      "original_height": "650px"
+    }
+  ]
+}

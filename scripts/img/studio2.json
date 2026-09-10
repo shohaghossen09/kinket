@@ -1,0 +1,47 @@
+🚀 Initializing Z-AI SDK...
+🔎 Searching images: "creative team of designers collaborating in modern minimalist studio office professional photography"
+✅ Got 5 images
+{
+  "success": true,
+  "query": "creative team of designers collaborating in modern minimalist studio office professional photography",
+  "count": 5,
+  "ranked": true,
+  "captioned_count": 3,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/307791aca307.png",
+      "caption": "",
+      "source": "Easy-Peasy.AI",
+      "original_width": "2048px",
+      "original_height": "2048px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/0bd44d1bcd6d.jpg",
+      "caption": "Modern minimalist interior featuring plywood walls, concrete pillar, exposed ceiling ducts, cream desk with open book, wooden chair. Suitable for background image.",
+      "source": "Yellowtrace",
+      "original_width": "1000px",
+      "original_height": "1400px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/dcf2825fb25c.jpg",
+      "caption": "",
+      "source": "Gensler",
+      "original_width": "2000px",
+      "original_height": "1125px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/c1e3246cc14c.jpg",
+      "caption": "Modern office lobby with wooden reception desk, blue chairs, glass meeting room, man standing at desk. Text: \"CHALHOUB GROUP SINCE 1955 TTCRZ\". Contains logo, suitable for background image.",
+      "source": "The Architects Diary",
+      "original_width": "1280px",
+      "original_height": "852px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/8a9abae97da2.jpg",
+      "caption": "Bright modern office lounge with beige sofas, wooden coffee table, floor-to-ceiling windows showing palm trees; no text, watermark-free, high clarity, suitable for background image",
+      "source": "Source COI",
+      "original_width": "2436px",
+      "original_height": "1624px"
+    }
+  ]
+}
