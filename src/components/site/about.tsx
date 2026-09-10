@@ -1,14 +1,22 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { SectionHeading, RevealLine, Reveal } from "./reveal";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useInView,
+  useReducedMotion,
+  animate,
+} from "framer-motion";
+import { Asterisk } from "lucide-react";
+import { RevealLine, Reveal } from "./reveal";
 
 /**
  * About — brand philosophy with layered parallax imagery.
- * The studio photograph drifts slower than the page, creating depth
- * between the statement typography and the visual evidence.
+ * The studio photograph wipes open via a scroll-scrubbed clip-path,
+ * counters tick up on entry, and a rotating stamp orbits the frame.
  */
 export function About() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -22,6 +30,14 @@ export function About() {
   const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const imgScale = useTransform(scrollYProgress, [0, 1], [1.12, 1.02]);
   const badgeY = useTransform(scrollYProgress, [0, 1], ["18%", "-18%"]);
+  const frameY = useTransform(scrollYProgress, [0, 1], ["7%", "-7%"]);
+
+  /* scroll-scrubbed clip-path reveal — the frame wipes open */
+  const clip = useTransform(
+    scrollYProgress,
+    [0.08, 0.42],
+    ["inset(16% 13% 16% 13% round 28px)", "inset(0% 0% 0% 0% round 24px)"]
+  );
 
   return (
     <section
@@ -65,19 +81,25 @@ export function About() {
           <Reveal delay={0.25}>
             <div className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-white/8 pt-8">
               <div>
-                <p className="font-display text-2xl font-semibold text-foreground">18</p>
+                <p className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
+                  <Counter to={18} />
+                </p>
                 <p className="mt-1 text-xs leading-snug text-muted-foreground">
                   Senior designers & engineers
                 </p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-foreground">3</p>
+                <p className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
+                  <Counter to={3} />
+                </p>
                 <p className="mt-1 text-xs leading-snug text-muted-foreground">
                   Studios across three continents
                 </p>
               </div>
               <div>
-                <p className="font-display text-2xl font-semibold text-foreground">96%</p>
+                <p className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
+                  <Counter to={96} suffix="%" />
+                </p>
                 <p className="mt-1 text-xs leading-snug text-muted-foreground">
                   Clients who return for round two
                 </p>
@@ -88,8 +110,18 @@ export function About() {
 
         {/* layered imagery */}
         <div className="relative">
+          {/* trailing frame — parallaxes opposite the photo for depth */}
+          <motion.div
+            style={reduced ? undefined : { y: frameY }}
+            className="absolute -right-4 -top-4 hidden h-full w-full rounded-3xl border border-white/10 sm:block"
+            aria-hidden="true"
+          />
+
           <Reveal>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 sm:aspect-[5/5]">
+            <motion.div
+              style={reduced ? undefined : { clipPath: clip }}
+              className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 sm:aspect-[5/5]"
+            >
               <motion.div
                 style={reduced ? undefined : { y: imgY, scale: imgScale }}
                 className="absolute inset-0 will-change-transform"
@@ -107,20 +139,35 @@ export function About() {
                 className="absolute inset-0 bg-gradient-to-t from-[#0a0a0b]/50 via-transparent to-transparent"
                 aria-hidden="true"
               />
-            </div>
+            </motion.div>
           </Reveal>
 
-          {/* floating glass badge */}
+          {/* rotating philosophy stamp */}
           <motion.div
             style={reduced ? undefined : { y: badgeY }}
-            className="glass-strong absolute -bottom-6 -left-4 z-10 rounded-2xl p-5 sm:-left-10 sm:p-6"
+            className="absolute -bottom-8 -left-4 z-10 h-32 w-32 sm:-left-12 sm:h-36 sm:w-36"
+            aria-hidden="true"
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-accent">
-              Philosophy
-            </p>
-            <p className="mt-2 max-w-[210px] font-display text-lg font-medium leading-snug text-foreground">
-              Craft over volume. Motion with meaning.
-            </p>
+            <div className="glass-strong absolute inset-1 rounded-full" />
+            <svg viewBox="0 0 100 100" className="animate-spin-slow absolute inset-0 h-full w-full">
+              <defs>
+                <path
+                  id="stamp-circle"
+                  d="M 50,50 m -36,0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
+                />
+              </defs>
+              <text
+                className="fill-foreground font-mono"
+                style={{ fontSize: "8px", letterSpacing: "2.4px" }}
+              >
+                <textPath href="#stamp-circle">
+                  CRAFT OVER VOLUME • MOTION WITH MEANING •
+                </textPath>
+              </text>
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Asterisk className="h-7 w-7 text-accent" strokeWidth={1.6} />
+            </div>
           </motion.div>
 
           {/* corner accent */}
@@ -131,5 +178,33 @@ export function About() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Counter — ticks up when scrolled into view                         */
+/* ------------------------------------------------------------------ */
+
+function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const reduced = useReducedMotion();
+  const [val, setVal] = useState(0);
+
+  useEffect(() => {
+    if (!inView || reduced) return;
+    const controls = animate(0, to, {
+      duration: 1.7,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setVal(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, to, reduced]);
+
+  return (
+    <span ref={ref}>
+      {reduced ? to : val}
+      {suffix}
+    </span>
   );
 }

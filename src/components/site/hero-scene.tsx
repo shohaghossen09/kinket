@@ -118,6 +118,7 @@ attribute float aPhase;
 attribute vec3 aColor;
 uniform float uTime;
 uniform float uPixelRatio;
+uniform float uWarp;
 varying vec3 vColor;
 varying float vTwinkle;
 void main(){
@@ -125,7 +126,7 @@ void main(){
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   float tw = sin(uTime * 1.5 + aPhase);
   vTwinkle = 0.55 + 0.45 * tw;
-  gl_PointSize = aSize * uPixelRatio * (150.0 / -mv.z) * (0.82 + 0.18 * tw);
+  gl_PointSize = aSize * uPixelRatio * (150.0 / -mv.z) * (0.82 + 0.18 * tw) * (1.0 + uWarp * 1.15);
   gl_Position = projectionMatrix * mv;
 }`;
 
@@ -288,6 +289,7 @@ export function HeroScene({ ready, className }: { ready: boolean; className?: st
         uTime: { value: 0 },
         uPixelRatio: { value: 1 },
         uOpacity: { value: 0 },
+        uWarp: { value: 0 },
       },
     });
     const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
@@ -338,39 +340,44 @@ export function HeroScene({ ready, className }: { ready: boolean; className?: st
       if (!reduced) state.time += dt;
 
       // continuous motion — the scene is always alive
-      world.rotation.y += dt * 0.1;
+      const s = state.scroll; // 0 → 1 across the pinned hero sequence
+      world.rotation.y += dt * (0.1 + s * 0.55);
       sculpture.rotation.y -= dt * 0.05;
       cage.rotation.y += dt * 0.03;
       cage.rotation.x -= dt * 0.012;
-      ringA.rotation.z += dt * 0.22;
-      ringB.rotation.z -= dt * 0.16;
-      galaxy.rotation.y += dt * 0.016;
+      ringA.rotation.z += dt * (0.22 + s * 0.5);
+      ringB.rotation.z -= dt * (0.16 + s * 0.4);
+      galaxy.rotation.y += dt * (0.016 + s * 0.3);
 
-      // breathing
+      // breathing + warp expansion as the camera dives through
       const breathe = 1 + Math.sin(state.time * 0.55) * 0.012;
-      sculpture.scale.setScalar(breathe);
+      sculpture.scale.setScalar(breathe * (1 + s * 1.5));
 
       // damped mouse parallax
       state.curX += (state.mouseX - state.curX) * 0.045;
       state.curY += (state.mouseY - state.curY) * 0.045;
 
-      // scroll choreography: pull back, tilt, intensify
-      const s = state.scroll;
-      camera.position.z = state.camZ + s * 3.6;
-      world.rotation.x = s * 0.55;
-      world.position.y = s * 1.1;
+      // scroll choreography: dive THROUGH the sculpture into warp
+      camera.position.z = state.camZ - s * 5.2;
+      world.rotation.x = s * 0.85;
+      world.position.y = s * 0.6;
 
       camera.position.x = state.curX * 0.9;
       camera.position.y = -state.curY * 0.6;
-      camera.lookAt(0, s * 0.7, 0);
+      camera.lookAt(0, s * 0.5, 0);
 
+      // sculpture swells then dissolves as we pass through it
+      const dissolve = THREE.MathUtils.smoothstep(s, 0.38, 0.72);
       sculptureMat.uniforms.uTime.value = state.time;
-      sculptureMat.uniforms.uAmp.value = state.amp * (1 + s * 0.45);
+      sculptureMat.uniforms.uAmp.value = state.amp * (1 + s * 0.9);
+      sculptureMat.uniforms.uOpacity.value = 1 - dissolve;
       galaxyMat.uniforms.uTime.value = state.time;
-      galaxyMat.uniforms.uOpacity.value = state.particles;
-      cageMat.opacity = state.cageOpacity * (1 - s * 0.6);
-      ringMatA.opacity = state.ringOpacity * (1 - s * 0.5);
-      ringMatB.opacity = state.ringOpacity * 0.85 * (1 - s * 0.5);
+      galaxyMat.uniforms.uOpacity.value =
+        state.particles * (1 - THREE.MathUtils.smoothstep(s, 0.8, 0.97) * 0.9);
+      galaxyMat.uniforms.uWarp.value = s;
+      cageMat.opacity = state.cageOpacity * Math.max(0, 1 - s * 2.4);
+      ringMatA.opacity = state.ringOpacity * Math.max(0, 1 - s * 2.4);
+      ringMatB.opacity = state.ringOpacity * 0.85 * Math.max(0, 1 - s * 2.4);
 
       renderer.render(scene, camera);
     };
@@ -403,11 +410,13 @@ export function HeroScene({ ready, className }: { ready: boolean; className?: st
       .to(state, { cageOpacity: 0.07, duration: 1.4, ease: "power2.out" }, 0.7)
       .to(state, { ringOpacity: 0.32, duration: 1.4, ease: "power2.out" }, 0.85);
 
-    /* --- scroll-linked camera (GSAP ScrollTrigger, scrubbed) --- */
+    /* --- scroll-linked camera (GSAP ScrollTrigger, scrubbed) ---
+       The hero section is a 320vh pin; the sticky window ends exactly
+       when the section bottom meets the viewport bottom. */
     const st = ScrollTrigger.create({
       trigger: host.closest("section") ?? host,
       start: "top top",
-      end: "bottom top",
+      end: "bottom bottom",
       scrub: true,
       onUpdate: (self) => {
         state.scroll = self.progress;

@@ -6,7 +6,9 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
+  useScroll,
   useReducedMotion,
+  type MotionValue,
 } from "framer-motion";
 import {
   Globe2,
@@ -99,6 +101,21 @@ const SERVICES: Service[] = [
 ];
 
 export function Services() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  /* per-column scroll parallax — the four columns drift at different speeds */
+  const { scrollYProgress } = useScroll({
+    target: gridRef,
+    offset: ["start end", "end start"],
+  });
+  const colY: MotionValue<number>[] = [
+    useTransform(scrollYProgress, [0, 1], [24, -24]),
+    useTransform(scrollYProgress, [0, 1], [-16, 16]),
+    useTransform(scrollYProgress, [0, 1], [30, -30]),
+    useTransform(scrollYProgress, [0, 1], [-12, 12]),
+  ];
+
   return (
     <section id="services" aria-labelledby="services-heading" className="relative py-28 sm:py-36">
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
@@ -113,9 +130,18 @@ export function Services() {
           description="Eight disciplines, one obsessive standard. Every deliverable is engineered to perform and designed to be remembered."
         />
 
-        <div className="perspective-1200 mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+        <div
+          ref={gridRef}
+          className="perspective-1200 mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5"
+        >
           {SERVICES.map((service, i) => (
-            <ServiceCard key={service.title} service={service} delay={(i % 4) * 0.08 + Math.floor(i / 4) * 0.12} />
+            <motion.div
+              key={service.title}
+              style={reduced ? undefined : { y: colY[i % 4] }}
+              className="will-change-transform"
+            >
+              <ServiceCard service={service} delay={(i % 4) * 0.08 + Math.floor(i / 4) * 0.12} />
+            </motion.div>
           ))}
         </div>
       </div>
@@ -158,12 +184,13 @@ function ServiceCard({ service, delay }: { service: Service; delay: number }) {
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      initial={reduced ? false : { opacity: 0, y: 44 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduced ? false : { opacity: 0, y: 90, rotateX: 18, scale: 0.92 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
       viewport={{ once: true, margin: "-8% 0px" }}
-      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay }}
-      style={tiltEnabled ? { rotateX, rotateY, transformStyle: "preserve-3d" } : undefined}
-      className="group relative flex min-h-[19rem] flex-col justify-between overflow-hidden rounded-2xl border border-white/8 bg-[#0e0e11] p-6 transition-colors duration-500 hover:border-accent/35"
+      transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay }}
+      whileHover={tiltEnabled ? { y: -6 } : undefined}
+      style={{ transformPerspective: 1000 }}
+      className="card-kinetic group relative overflow-hidden rounded-2xl border border-white/8 bg-[#0e0e11] transition-colors duration-500 hover:border-accent/35"
     >
       {/* cursor spotlight */}
       <div
@@ -175,51 +202,60 @@ function ServiceCard({ service, delay }: { service: Service; delay: number }) {
         aria-hidden="true"
       />
 
-      {/* top gradient hairline on hover */}
-      <div
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+      {/* giant index watermark — swings in on hover */}
+      <span
+        className="pointer-events-none absolute -bottom-4 -right-2 rotate-8 select-none font-display text-8xl font-bold leading-none text-outline opacity-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-0 group-hover:opacity-60"
         aria-hidden="true"
-      />
+      >
+        {service.index}
+      </span>
 
-      <div style={tiltEnabled ? { transform: "translateZ(34px)" } : undefined}>
-        <div className="flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-foreground transition-colors duration-500 group-hover:border-accent/40 group-hover:text-accent">
-            <Icon className="h-5 w-5" strokeWidth={1.6} />
+      {/* tilt layer */}
+      <motion.div
+        style={tiltEnabled ? { rotateX, rotateY, transformStyle: "preserve-3d" } : undefined}
+        className="relative flex min-h-[19rem] flex-col justify-between p-6"
+      >
+        <div style={tiltEnabled ? { transform: "translateZ(34px)" } : undefined}>
+          <div className="flex items-start justify-between">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-foreground transition-all duration-500 group-hover:-rotate-6 group-hover:scale-110 group-hover:border-accent/40 group-hover:text-accent group-hover:shadow-[0_10px_30px_-8px_rgba(255,106,61,0.5)]">
+              <Icon className="h-5 w-5" strokeWidth={1.6} />
+            </div>
+            <span className="font-mono text-xs text-muted-foreground/70 transition-colors duration-500 group-hover:text-accent">
+              {service.index}
+            </span>
           </div>
-          <span className="font-mono text-xs text-muted-foreground/70">{service.index}</span>
+
+          <h3 className="mt-8 font-display text-lg font-semibold tracking-tight text-foreground">
+            {service.title}
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {service.description}
+          </p>
         </div>
 
-        <h3 className="mt-8 font-display text-lg font-semibold tracking-tight text-foreground">
-          {service.title}
-        </h3>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {service.description}
-        </p>
-      </div>
-
-      {/* revealed detail */}
-      <div
-        className="mt-6 lg:translate-y-3 lg:opacity-0 lg:transition-all lg:duration-500 lg:ease-[cubic-bezier(0.16,1,0.3,1)] lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
-        style={tiltEnabled ? { transform: "translateZ(20px)" } : undefined}
-      >
-        <ul className="flex flex-wrap gap-2" aria-label={`${service.title} deliverables`}>
-          {service.deliverables.map((d) => (
-            <li
-              key={d}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium text-muted-foreground"
-            >
-              {d}
-            </li>
-          ))}
-        </ul>
-        <a
-          href="#contact"
-          className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:text-accent"
-        >
-          Discuss this service
-          <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-45" />
-        </a>
-      </div>
+        {/* revealed detail — chips cascade in with per-chip stagger */}
+        <div className="mt-6" style={tiltEnabled ? { transform: "translateZ(20px)" } : undefined}>
+          <ul className="flex flex-wrap gap-2" aria-label={`${service.title} deliverables`}>
+            {service.deliverables.map((d, di) => (
+              <li
+                key={d}
+                style={{ transitionDelay: `${70 + di * 55}ms` }}
+                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium text-muted-foreground transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:translate-y-2.5 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+              >
+                {d}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#contact"
+            style={{ transitionDelay: "320ms" }}
+            className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-foreground transition-all duration-500 hover:text-accent lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+          >
+            Discuss this service
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-45" />
+          </a>
+        </div>
+      </motion.div>
     </motion.article>
   );
 }

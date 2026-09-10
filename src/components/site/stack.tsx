@@ -8,13 +8,13 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 type Category = "frontend" | "backend" | "ai" | "motion" | "infra";
 
-const CATEGORIES: { id: Category | "all"; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "frontend", label: "Frontend" },
-  { id: "backend", label: "Backend" },
-  { id: "ai", label: "AI & Data" },
-  { id: "motion", label: "Motion & 3D" },
-  { id: "infra", label: "Infrastructure" },
+const CATEGORIES: { id: Category | "all"; label: string; ghost: string }[] = [
+  { id: "all", label: "All", ghost: "ARSENAL" },
+  { id: "frontend", label: "Frontend", ghost: "FRONTEND" },
+  { id: "backend", label: "Backend", ghost: "BACKEND" },
+  { id: "ai", label: "AI & Data", ghost: "AI & DATA" },
+  { id: "motion", label: "Motion & 3D", ghost: "MOTION & 3D" },
+  { id: "infra", label: "Infrastructure", ghost: "INFRA" },
 ];
 
 const DOT: Record<Category, string> = {
@@ -23,6 +23,19 @@ const DOT: Record<Category, string> = {
   ai: "bg-[#e85d75]",
   motion: "bg-[#c084fc]",
   infra: "bg-[#4ade80]",
+};
+
+/** category-colored hover glow per chip */
+const GLOW: Record<Category, string> = {
+  frontend:
+    "group-hover:border-accent-warm/50 group-hover:shadow-[0_18px_50px_-16px_rgba(255,194,75,0.4)]",
+  backend:
+    "group-hover:border-accent/50 group-hover:shadow-[0_18px_50px_-16px_rgba(255,106,61,0.4)]",
+  ai: "group-hover:border-[#e85d75]/55 group-hover:shadow-[0_18px_50px_-16px_rgba(232,93,117,0.45)]",
+  motion:
+    "group-hover:border-[#c084fc]/55 group-hover:shadow-[0_18px_50px_-16px_rgba(192,132,252,0.45)]",
+  infra:
+    "group-hover:border-[#4ade80]/55 group-hover:shadow-[0_18px_50px_-16px_rgba(74,222,128,0.4)]",
 };
 
 interface Tech {
@@ -72,9 +85,9 @@ const TECHS: Tech[] = [
 ];
 
 /**
- * Tech stack constellation — a filterable, layout-animated field of
- * technologies. Category pills re-flow the grid with spring physics;
- * chips lift and glow on hover.
+ * The Arsenal — a filterable constellation of technologies under a
+ * rotating radar sweep, with a giant ghost label that swaps per category
+ * and chips that scan, glow and re-flow with spring physics.
  */
 export function Stack() {
   const [active, setActive] = useState<Category | "all">("all");
@@ -85,6 +98,8 @@ export function Stack() {
     [active]
   );
 
+  const ghost = CATEGORIES.find((c) => c.id === active)?.ghost ?? "ARSENAL";
+
   const headerVariants: Variants = {
     hidden: { opacity: 0, y: 24 },
     show: (d: number) => ({
@@ -92,6 +107,25 @@ export function Stack() {
       y: 0,
       transition: { duration: 0.8, ease: EASE, delay: d },
     }),
+  };
+
+  /* arrow-key navigation across the filter pills */
+  const onTabsKeyDown = (e: React.KeyboardEvent) => {
+    const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+    const tabs = Array.from(
+      e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+    );
+    if (!tabs.length) return;
+    const current = tabs.findIndex((t) => t.getAttribute("aria-selected") === "true");
+    let next = current;
+    if (e.key === "ArrowRight") next = (current + 1) % tabs.length;
+    else if (e.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = tabs.length - 1;
+    tabs[next]?.focus();
+    tabs[next]?.click();
   };
 
   return (
@@ -144,22 +178,23 @@ export function Stack() {
             viewport={{ once: true, margin: "-15% 0px" }}
             className="max-w-sm text-sm leading-relaxed text-muted-foreground"
           >
-            Thirty-two production-grade technologies orchestrated into one
+            Thirty-three production-grade technologies orchestrated into one
             coherent system — chosen for speed, stability and sheer expressive
             power.
           </motion.p>
         </div>
 
-        {/* filter pills */}
+        {/* filter pills + live counter */}
         <motion.div
           custom={0.2}
           variants={headerVariants}
           initial={reduced ? false : "hidden"}
           whileInView="show"
           viewport={{ once: true, margin: "-10% 0px" }}
-          className="mb-10 flex flex-wrap gap-2"
+          className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-4"
           role="tablist"
           aria-label="Filter technologies by category"
+          onKeyDown={onTabsKeyDown}
         >
           {CATEGORIES.map((c) => (
             <button
@@ -190,43 +225,94 @@ export function Stack() {
               )}
             </button>
           ))}
+
+          {/* live count — ticks over on filter change */}
+          <p className="ml-auto font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground" aria-live="polite">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={visible.length}
+                initial={reduced ? false : { y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={reduced ? undefined : { y: -10, opacity: 0 }}
+                transition={{ duration: 0.3, ease: EASE }}
+                className="inline-block text-accent"
+              >
+                {visible.length}
+              </motion.span>
+            </AnimatePresence>
+            {" "}
+            / {TECHS.length} systems
+          </p>
         </motion.div>
 
-        {/* chips field */}
-        <motion.ul layout className="flex flex-wrap gap-3 sm:gap-4" aria-live="polite">
-          <AnimatePresence mode="popLayout">
-            {visible.map((tech) => (
-              <motion.li
-                key={tech.name}
-                layout
-                initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: 18 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: -14 }}
-                transition={
-                  reduced
-                    ? { duration: 0.15 }
-                    : { type: "spring", stiffness: 320, damping: 26 }
-                }
-                className="group relative"
+        {/* chips field with radar + ghost label */}
+        <div className="relative">
+          {/* rotating radar sweep */}
+          <div
+            className="radar-sweep pointer-events-none absolute left-1/2 top-1/2 h-[74vw] w-[74vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 [mask-image:radial-gradient(closest-side,black_25%,transparent_72%)]"
+            aria-hidden="true"
+          />
+
+          {/* giant ghost category label */}
+          <div
+            className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+            aria-hidden="true"
+          >
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={ghost}
+                initial={reduced ? false : { opacity: 0, y: 46, scale: 0.97 }}
+                animate={{ opacity: 0.055, y: 0, scale: 1 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -46, scale: 1.02 }}
+                transition={{ duration: 0.65, ease: EASE }}
+                className="whitespace-nowrap font-display text-[clamp(3.6rem,14vw,13rem)] font-bold uppercase leading-none tracking-tight text-foreground will-change-transform"
               >
-                <div className="flex cursor-default items-center gap-3 rounded-2xl glass-panel px-5 py-4 transition-all duration-400 group-hover:-translate-y-1.5 group-hover:border-accent/45 group-hover:shadow-[0_18px_50px_-16px_rgba(255,106,61,0.35)]">
-                  <span
-                    className={`h-2 w-2 rounded-full ${DOT[tech.cat]} transition-transform duration-300 group-hover:scale-150`}
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <p className="font-display text-sm font-semibold tracking-tight sm:text-base">
-                      {tech.name}
-                    </p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/80">
-                      {tech.level}
-                    </p>
+                {ghost}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+
+          <motion.ul layout className="relative flex flex-wrap gap-3 sm:gap-4" aria-live="polite">
+            <AnimatePresence mode="popLayout">
+              {visible.map((tech, i) => (
+                <motion.li
+                  key={tech.name}
+                  layout
+                  initial={
+                    reduced
+                      ? { opacity: 0 }
+                      : { opacity: 0, scale: 0.6, y: 18, rotate: (i % 5 - 2) * 3 }
+                  }
+                  animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6, y: -14, rotate: (i % 3 - 1) * 4 }}
+                  transition={
+                    reduced
+                      ? { duration: 0.15 }
+                      : { type: "spring", stiffness: 320, damping: 26 }
+                  }
+                  className="group relative"
+                >
+                  <div
+                    className={`chip-scan flex cursor-default items-center gap-3 rounded-2xl glass-panel px-5 py-4 transition-all duration-400 group-hover:-translate-y-1.5 ${GLOW[tech.cat]}`}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${DOT[tech.cat]} transition-transform duration-300 group-hover:scale-150`}
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <p className="font-display text-sm font-semibold tracking-tight sm:text-base">
+                        {tech.name}
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground/80">
+                        {tech.level}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </motion.ul>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
+        </div>
       </div>
     </section>
   );

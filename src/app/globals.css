@@ -187,6 +187,11 @@
     -webkit-text-stroke: 1px rgba(244, 243, 239, 0.22);
     color: transparent;
   }
+  .text-outline-strong {
+    -webkit-text-stroke: 1.5px rgba(244, 243, 239, 0.6);
+    color: transparent;
+    text-shadow: 0 0 80px rgba(255, 106, 61, 0.12);
+  }
   .text-balance {
     text-wrap: balance;
   }
@@ -267,6 +272,139 @@
   }
   .transform-3d {
     transform-style: preserve-3d;
+  }
+
+  /* ---------- kinetic card border (rotating conic sweep) ---------- */
+  @property --card-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .card-kinetic {
+    position: relative;
+  }
+  .card-kinetic::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--card-angle),
+      transparent 0%,
+      transparent 38%,
+      rgba(255, 194, 75, 0.85) 47%,
+      rgba(255, 106, 61, 0.95) 52%,
+      rgba(232, 93, 117, 0.85) 57%,
+      transparent 66%,
+      transparent 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+  }
+  .card-kinetic:hover::before,
+  .card-kinetic:focus-within::before {
+    opacity: 1;
+    animation: card-angle-spin 2.6s linear infinite;
+  }
+  @keyframes card-angle-spin {
+    to {
+      --card-angle: 360deg;
+    }
+  }
+
+  /* ---------- radar sweep (Arsenal backdrop) ---------- */
+  .radar-sweep {
+    background: conic-gradient(
+      from 0deg,
+      rgba(255, 106, 61, 0) 0deg,
+      rgba(255, 106, 61, 0.05) 40deg,
+      rgba(255, 194, 75, 0.12) 70deg,
+      rgba(255, 106, 61, 0.05) 100deg,
+      rgba(255, 106, 61, 0) 140deg,
+      rgba(255, 106, 61, 0) 360deg
+    );
+    animation: radar-rotate 9s linear infinite;
+  }
+  @keyframes radar-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ---------- chip scan sweep ---------- */
+  .chip-scan {
+    position: relative;
+    overflow: hidden;
+  }
+  .chip-scan::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.09) 46%,
+      rgba(255, 194, 75, 0.16) 50%,
+      rgba(255, 255, 255, 0.09) 54%,
+      transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .group:hover .chip-scan::after,
+  .group:focus-within .chip-scan::after {
+    transform: translateX(120%);
+  }
+
+  /* ---------- shimmering gradient text ---------- */
+  .text-shimmer {
+    background: linear-gradient(
+      100deg,
+      #ffc24b 0%,
+      #ff6a3d 25%,
+      #e85d75 50%,
+      #ff6a3d 75%,
+      #ffc24b 100%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer-slide 5.5s ease-in-out infinite;
+  }
+  @keyframes shimmer-slide {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* ---------- CTA pulse rings ---------- */
+  .animate-cta-pulse {
+    animation: cta-pulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  @keyframes cta-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    70% {
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
   }
 
   /* ---------- kinetic form fields ---------- */
@@ -350,8 +488,21 @@
   .animate-marquee-fast,
   .animate-spin-slow,
   .animate-drift,
-  .animate-pulse-soft {
+  .animate-pulse-soft,
+  .radar-sweep {
     animation: none !important;
+  }
+  .card-kinetic:hover::before,
+  .card-kinetic:focus-within::before {
+    animation: none !important;
+  }
+  .text-shimmer {
+    animation: none !important;
+    background-position: 0% 50%;
+  }
+  .animate-cta-pulse {
+    animation: none !important;
+    opacity: 0 !important;
   }
   *,
   *::before,

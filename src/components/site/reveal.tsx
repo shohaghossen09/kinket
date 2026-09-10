@@ -30,21 +30,34 @@ export function Reveal({ children, className, delay = 0, y = 36, once = true }: 
   );
 }
 
-/** Masked line reveal — text slides up from behind an overflow clip. */
+/**
+ * Masked line reveal — text slides up from behind an overflow clip.
+ *
+ * NOTE: whileInView sits on the OUTER (unclipped, layout-visible) wrapper
+ * and propagates to the inner span via variants. Observing the inner span
+ * directly would deadlock: it starts fully outside the overflow clip, so
+ * IntersectionObserver would never report it as intersecting.
+ */
 export function RevealLine({ children, className, delay = 0 }: RevealProps) {
   const reduced = useReducedMotion();
+  const lineVariants: Variants = {
+    hidden: { y: "110%" },
+    show: {
+      y: 0,
+      transition: { duration: 1, ease: EASE, delay },
+    },
+  };
   return (
-    <span className={`block overflow-hidden ${className ?? ""}`}>
-      <motion.span
-        className="block will-change-transform"
-        initial={reduced ? { y: 0 } : { y: "110%" }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 1, ease: EASE, delay }}
-      >
+    <motion.span
+      className={`block overflow-hidden ${className ?? ""}`}
+      initial={reduced ? "show" : "hidden"}
+      whileInView="show"
+      viewport={{ once: true, margin: "-10% 0px" }}
+    >
+      <motion.span className="block will-change-transform" variants={lineVariants}>
         {children}
       </motion.span>
-    </span>
+    </motion.span>
   );
 }
 
