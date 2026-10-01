@@ -36,6 +36,16 @@ const CASCADE = [
   { word: "PRODUCTS", num: "05" },
 ];
 
+/* Cascade filmstrip layout — every word is scrubbed through a fixed
+   [start, start + CASCADE_WORD_SPAN] window of scrollYProgress. Spacing is
+   derived so the LAST word's window ends exactly at 1: useTransform keyframe
+   offsets must stay within [0,1] or the browser's Element.animate() throws
+   "Offsets must be null or in the range [0,1]". */
+const CASCADE_START = 0.6;
+const CASCADE_WORD_SPAN = 0.16;
+const CASCADE_STEP =
+  (1 - CASCADE_START - CASCADE_WORD_SPAN) / Math.max(CASCADE.length - 1, 1);
+
 export function Hero({ ready }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -337,7 +347,13 @@ export function Hero({ ready }: HeroProps) {
               className="absolute inset-0 bg-[radial-gradient(closest-side,rgba(8,8,10,0.78),rgba(8,8,10,0.35))]"
             />
             {CASCADE.map((c, k) => (
-              <CascadeWord key={c.word} progress={scrollYProgress} start={0.6 + k * 0.065} word={c.word} num={c.num} />
+              <CascadeWord
+                key={c.word}
+                progress={scrollYProgress}
+                start={CASCADE_START + k * CASCADE_STEP}
+                word={c.word}
+                num={c.num}
+              />
             ))}
           </div>
         )}
@@ -420,10 +436,18 @@ function CascadeWord({
   word: string;
   num: string;
 }) {
-  const o = useTransform(progress, [start, start + 0.05, start + 0.105, start + 0.16], [0, 1, 1, 0]);
-  const y = useTransform(progress, [start, start + 0.16], [70, -70]);
-  const scale = useTransform(progress, [start, start + 0.16], [0.92, 1.08]);
-  const blur = useTransform(progress, [start, start + 0.05, start + 0.16], ["blur(14px)", "blur(0px)", "blur(10px)"]);
+  const o = useTransform(
+    progress,
+    [start, start + 0.05, start + 0.105, start + CASCADE_WORD_SPAN],
+    [0, 1, 1, 0],
+  );
+  const y = useTransform(progress, [start, start + CASCADE_WORD_SPAN], [70, -70]);
+  const scale = useTransform(progress, [start, start + CASCADE_WORD_SPAN], [0.92, 1.08]);
+  const blur = useTransform(
+    progress,
+    [start, start + 0.05, start + CASCADE_WORD_SPAN],
+    ["blur(14px)", "blur(0px)", "blur(10px)"],
+  );
 
   return (
     <motion.div
