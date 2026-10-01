@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Never use standalone on Vercel to avoid the next-server.js.nft.json ENOENT error
-  output: process.env.VERCEL ? undefined : (process.env.BUILD_STANDALONE ? "standalone" : undefined),
+  output: "standalone",
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
