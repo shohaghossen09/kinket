@@ -138,7 +138,7 @@ export function Work() {
 /* ------------------------------ horizontal (pinned) ------------------------------ */
 
 function HorizontalWork({ onSelect }: { onSelect: (p: Project) => void }) {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(0);
   const [viewportH, setViewportH] = useState(0);

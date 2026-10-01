@@ -120,7 +120,7 @@ export function Cta() {
           Ready when you are
         </motion.p>
 
-        <h2
+        <motion.h2
           id="cta-heading"
           style={reduced ? undefined : { skewX }}
           className="font-display text-[clamp(2.6rem,8.6vw,7.6rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-foreground"
@@ -142,7 +142,7 @@ export function Cta() {
               </ScrubWord>
             )
           )}
-        </h2>
+        </motion.h2>
 
         <motion.p
           initial={reduced ? false : { opacity: 0, y: 20 }}
